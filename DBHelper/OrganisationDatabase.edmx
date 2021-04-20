@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="organisationdatabaseModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="8.0" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="alarmmonitorlogs">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="almMessage" Type="text" Nullable="false" />
+          <Property Name="almTime" Type="datetime" Precision="0" Nullable="false" />
+          <Property Name="Classid" Type="int" Nullable="false" />
+          <Property Name="deviceip" Type="varchar" MaxLength="45" Nullable="false" />
+        </EntityType>
+        <EntityType Name="cameramonitorinfo">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DeviceIp" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="exectime" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="Classid" Type="varchar" MaxLength="45" Nullable="false" />
+        </EntityType>
+        <EntityType Name="classdetails">
+          <Key>
+            <PropertyRef Name="classID" />
+          </Key>
+          <Property Name="classID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClassName" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="teachingBuilding" Type="int" Nullable="false" />
+          <Property Name="floor" Type="int" Nullable="false" />
+          <Property Name="Seats" Type="int" Nullable="false" />
+          <Property Name="camipS" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="camipT" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="camSmac" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="camTmac" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="camport" Type="int" Nullable="false" />
+          <Property Name="camuserid" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="campass" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="CCEquipIP" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="ccmac" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="desktopip" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="deskmac" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="recordingEquip" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="recordermac" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="callhelpip" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="callhelpmac" Type="varchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <Association Name="fk_monitoringclassid">
+          <End Role="classdetails" Type="Self.classdetails" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="alarmmonitorlogs" Type="Self.alarmmonitorlogs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="classdetails">
+              <PropertyRef Name="classID" />
+            </Principal>
+            <Dependent Role="alarmmonitorlogs">
+              <PropertyRef Name="Classid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="organisationdatabaseModelStoreContainer">
+          <EntitySet Name="alarmmonitorlogs" EntityType="Self.alarmmonitorlogs" Schema="organisationdatabase" store:Type="Tables" />
+          <EntitySet Name="cameramonitorinfo" EntityType="Self.cameramonitorinfo" Schema="organisationdatabase" store:Type="Tables" />
+          <EntitySet Name="classdetails" EntityType="Self.classdetails" Schema="organisationdatabase" store:Type="Tables" />
+          <AssociationSet Name="fk_monitoringclassid" Association="Self.fk_monitoringclassid">
+            <End Role="classdetails" EntitySet="classdetails" />
+            <End Role="alarmmonitorlogs" EntitySet="alarmmonitorlogs" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="organisationdatabaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="classdetail">
+          <Key>
+            <PropertyRef Name="classID" />
+          </Key>
+          <Property Name="classID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClassName" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="teachingBuilding" Type="Int32" Nullable="false" />
+          <Property Name="floor" Type="Int32" Nullable="false" />
+          <Property Name="Seats" Type="Int32" Nullable="false" />
+          <Property Name="camipS" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="camipT" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="camSmac" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="camTmac" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="camport" Type="Int32" Nullable="false" />
+          <Property Name="camuserid" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="campass" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CCEquipIP" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ccmac" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="desktopip" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="deskmac" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="recordingEquip" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="recordermac" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="callhelpip" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="callhelpmac" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="alarmmonitorlogs" Relationship="organisationdatabaseModel.fk_monitoringclassid" FromRole="classdetail" ToRole="alarmmonitorlog" />
+        </EntityType>
+        <EntityContainer Name="organisationdatabaseEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="classdetails" EntityType="Self.classdetail" />
+          <EntitySet Name="alarmmonitorlogs" EntityType="organisationdatabaseModel.alarmmonitorlog" />
+          <EntitySet Name="cameramonitorinfoes" EntityType="organisationdatabaseModel.cameramonitorinfo" />
+          <AssociationSet Name="fk_monitoringclassid" Association="organisationdatabaseModel.fk_monitoringclassid">
+            <End Role="classdetail" EntitySet="classdetails" />
+            <End Role="alarmmonitorlog" EntitySet="alarmmonitorlogs" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="alarmmonitorlog">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="almMessage" Type="String" Nullable="false" MaxLength="65535" FixedLength="false" Unicode="false" />
+          <Property Name="almTime" Type="DateTime" Nullable="false" />
+          <Property Name="Classid" Type="Int32" Nullable="false" />
+          <Property Name="deviceip" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="classdetail" Relationship="organisationdatabaseModel.fk_monitoringclassid" FromRole="alarmmonitorlog" ToRole="classdetail" />
+        </EntityType>
+        <EntityType Name="cameramonitorinfo">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DeviceIp" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="exectime" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="Classid" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="fk_monitoringclassid">
+          <End Type="organisationdatabaseModel.classdetail" Role="classdetail" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="organisationdatabaseModel.alarmmonitorlog" Role="alarmmonitorlog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="classdetail">
+              <PropertyRef Name="classID" />
+            </Principal>
+            <Dependent Role="alarmmonitorlog">
+              <PropertyRef Name="Classid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="organisationdatabaseModelStoreContainer" CdmEntityContainer="organisationdatabaseEntities">
+          <EntitySetMapping Name="classdetails">
+            <EntityTypeMapping TypeName="organisationdatabaseModel.classdetail">
+              <MappingFragment StoreEntitySet="classdetails">
+                <ScalarProperty Name="classID" ColumnName="classID" />
+                <ScalarProperty Name="ClassName" ColumnName="ClassName" />
+                <ScalarProperty Name="teachingBuilding" ColumnName="teachingBuilding" />
+                <ScalarProperty Name="floor" ColumnName="floor" />
+                <ScalarProperty Name="Seats" ColumnName="Seats" />
+                <ScalarProperty Name="camipS" ColumnName="camipS" />
+                <ScalarProperty Name="camipT" ColumnName="camipT" />
+                <ScalarProperty Name="camSmac" ColumnName="camSmac" />
+                <ScalarProperty Name="camTmac" ColumnName="camTmac" />
+                <ScalarProperty Name="camport" ColumnName="camport" />
+                <ScalarProperty Name="camuserid" ColumnName="camuserid" />
+                <ScalarProperty Name="campass" ColumnName="campass" />
+                <ScalarProperty Name="CCEquipIP" ColumnName="CCEquipIP" />
+                <ScalarProperty Name="ccmac" ColumnName="ccmac" />
+                <ScalarProperty Name="desktopip" ColumnName="desktopip" />
+                <ScalarProperty Name="deskmac" ColumnName="deskmac" />
+                <ScalarProperty Name="recordingEquip" ColumnName="recordingEquip" />
+                <ScalarProperty Name="recordermac" ColumnName="recordermac" />
+                <ScalarProperty Name="callhelpip" ColumnName="callhelpip" />
+                <ScalarProperty Name="callhelpmac" ColumnName="callhelpmac" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="alarmmonitorlogs">
+            <EntityTypeMapping TypeName="organisationdatabaseModel.alarmmonitorlog">
+              <MappingFragment StoreEntitySet="alarmmonitorlogs">
+                <ScalarProperty Name="deviceip" ColumnName="deviceip" />
+                <ScalarProperty Name="Classid" ColumnName="Classid" />
+                <ScalarProperty Name="almTime" ColumnName="almTime" />
+                <ScalarProperty Name="almMessage" ColumnName="almMessage" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="cameramonitorinfoes">
+            <EntityTypeMapping TypeName="organisationdatabaseModel.cameramonitorinfo">
+              <MappingFragment StoreEntitySet="cameramonitorinfo">
+                <ScalarProperty Name="Classid" ColumnName="Classid" />
+                <ScalarProperty Name="exectime" ColumnName="exectime" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="DeviceIp" ColumnName="DeviceIp" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
