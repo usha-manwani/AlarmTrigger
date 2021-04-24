@@ -1,25 +1,24 @@
-﻿using Microsoft.AspNet.SignalR.Client;
-using DBHelper;
+﻿using DBHelper;
+using Microsoft.AspNet.SignalR.Client;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net;
 
 namespace AlarmTrigger
 {
     class Alarm
     {
-        
         private static List<DeviceInfo> deviceInfos = new List<DeviceInfo>();
-        private static Int32 m_lUserID = -1;
-        private static Int32[] m_lAlarmHandle = new Int32[200];
-        private static Int32 iListenHandle = -1;
+        private static int m_lUserID = -1;
+        private static int[] m_lAlarmHandle = new int[200];
+        private static int iListenHandle = -1;
         private static int iDeviceNumber = 0; //添加设备个数
         private static int iFileNumber = 0; //保存的文件个数
         private static uint iLastErr = 0;
@@ -41,9 +40,10 @@ namespace AlarmTrigger
         CHCNetSDK.NET_VCA_INTRUSION m_struIntrusion = new CHCNetSDK.NET_VCA_INTRUSION();
         CHCNetSDK.UNION_STATFRAME m_struStatFrame = new CHCNetSDK.UNION_STATFRAME();
         CHCNetSDK.UNION_STATTIME m_struStatTime = new CHCNetSDK.UNION_STATTIME();
-        public  Alarm() {
+        public Alarm()
+        {
             ConnectToHub();
-            
+
             bool m_bInitSDK = CHCNetSDK.NET_DVR_Init();
             if (m_bInitSDK == false)
             {
@@ -106,22 +106,14 @@ namespace AlarmTrigger
                 CHCNetSDK.NET_DVR_SetDVRMessageCallBack_V31(m_falarmData_V31, IntPtr.Zero);
             }
             StartListenTcp();
-           // GetDevices();
+            // GetDevices();
         }
         public void UpdateClientListException(string strAlarmTime, int lUserID, string strAlarmMsg)
         {
             //异常设备信息
             string strDevIP = "";
-            strDevIP= deviceInfos.Where(x => x.MuserId == lUserID)
+            strDevIP = deviceInfos.Where(x => x.MuserId == lUserID)
                 .Select(y => y.DeviceIp.TrimEnd('\0')).FirstOrDefault();
-            //for (int i = 0; i < iDeviceNumber; i++)
-            //{
-            //    m_lUserID = Int32.Parse(DeviceInfo.Items[i].SubItems[0].Text);
-            //    if (m_lUserID == lUserID)
-            //    {
-            //        strDevIP = listViewDevice.Items[i].SubItems[1].Text.TrimEnd('\0');
-            //    }
-            //}
 
             //列表新增报警信息
             GetDeviceDetails gt = new GetDeviceDetails();
@@ -225,10 +217,10 @@ namespace AlarmTrigger
                         //报警信息类型
                         string stringAlarm = "报警上传，信息类型：0x" + Convert.ToString(lCommand, 16);
 
-                        
-                            //创建该控件的主线程直接更新信息列表 
-                            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-                        
+
+                        //创建该控件的主线程直接更新信息列表 
+                        UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
                     }
                     break;
             }
@@ -334,10 +326,10 @@ namespace AlarmTrigger
                     break;
             }
 
-            
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
 
         private static void ProcessCommAlarm_V30(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
@@ -494,10 +486,10 @@ namespace AlarmTrigger
                     break;
             }
 
-           
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
 
         }
 
@@ -579,10 +571,10 @@ namespace AlarmTrigger
             //报警设备IP地址
             string strIP = System.Text.Encoding.UTF8.GetString(struRuleAlarmInfo.struDevInfo.struDevIP.sIpV4).TrimEnd('\0');
 
-            
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(strTime, strIP, stringAlarm);
-            
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(strTime, strIP, stringAlarm);
+
         }
 
         private static void ProcessCommAlarm_Plate(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
@@ -638,10 +630,10 @@ namespace AlarmTrigger
             string stringPlateLicense = System.Text.Encoding.GetEncoding("GBK").GetString(struPlateResultInfo.struPlateInfo.sLicense).TrimEnd('\0');
             string stringAlarm = "抓拍上传，" + "车牌：" + stringPlateLicense + "，车辆序号：" + struPlateResultInfo.struVehicleInfo.dwIndex;
 
-           
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
 
         private static void ProcessCommAlarm_ITSPlate(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
@@ -683,9 +675,9 @@ namespace AlarmTrigger
             string stringPlateLicense = System.Text.Encoding.GetEncoding("GBK").GetString(struITSPlateResult.struPlateInfo.sLicense).TrimEnd('\0');
             string stringAlarm = "抓拍上传，" + "车牌：" + stringPlateLicense + "，车辆序号：" + struITSPlateResult.struVehicleInfo.dwIndex;
 
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
         private static void ProcessCommAlarm_TPSRealInfo(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
         {
@@ -721,9 +713,9 @@ namespace AlarmTrigger
                 "，dwUpwardFlow：" + struTPSInfo.struTPSRealTimeInfo.dwUpwardFlow +
                 "，byJamLevel：" + struTPSInfo.struTPSRealTimeInfo.byJamLevel;
 
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
 
         private static void ProcessCommAlarm_TPSStatInfo(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
@@ -766,10 +758,10 @@ namespace AlarmTrigger
                     "，时间占有率:" + struTPSStatInfo.struTPSStatisticsInfo.struLaneParam[i].fTimeOccupyRation;
             }
 
-           
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
 
         private static void ProcessCommAlarm_PDC(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
@@ -791,7 +783,7 @@ namespace AlarmTrigger
             }
             if (struPDCInfo.byMode == 1) //最小时间段统计结果
             {
-               var m_struStatTime = (CHCNetSDK.UNION_STATTIME)Marshal.PtrToStructure(ptrPDCUnion, typeof(CHCNetSDK.UNION_STATTIME));
+                var m_struStatTime = (CHCNetSDK.UNION_STATTIME)Marshal.PtrToStructure(ptrPDCUnion, typeof(CHCNetSDK.UNION_STATTIME));
 
                 //开始时间
                 string strStartTime = string.Format("{0:D4}", m_struStatTime.tmStart.dwYear) +
@@ -817,10 +809,10 @@ namespace AlarmTrigger
             string strIP = System.Text.Encoding.UTF8.GetString(pAlarmer.sDeviceIP).TrimEnd('\0');
 
 
-            
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
 
 
@@ -854,10 +846,10 @@ namespace AlarmTrigger
                 ", 车辆状态：" + struParkInfo.byLocationStatus + "，车牌号码：" +
                 System.Text.Encoding.GetEncoding("GBK").GetString(struParkInfo.struPlateInfo.sLicense).TrimEnd('\0');
 
-            
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
 
         private static void ProcessCommAlarm_VQD(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
@@ -880,10 +872,10 @@ namespace AlarmTrigger
             string stringAlarm = "视频质量诊断结果，流ID：" + struVQDInfo.sStreamID + "，监测点IP：" + struVQDInfo.sMonitorIP + "，监控点通道号：" + struVQDInfo.dwChanIndex +
                 "，检测时间：" + strCheckTime + "，byResult：" + struVQDInfo.byResult + "，bySignalResult：" + struVQDInfo.bySignalResult + "，byBlurResult：" + struVQDInfo.byBlurResult;
 
-            
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
 
         private static void ProcessCommAlarm_FaceSnap(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
@@ -920,9 +912,9 @@ namespace AlarmTrigger
             string stringAlarm = "人脸抓拍结果，前端设备：" + System.Text.Encoding.UTF8.GetString(struFaceSnapInfo.struDevInfo.struDevIP.sIpV4).TrimEnd('\0') +
                 "，通道号：" + struFaceSnapInfo.struDevInfo.byIvmsChannel + "，报警时间：" + strTime;
 
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
 
         private static void ProcessCommAlarm_FaceMatch(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
@@ -973,10 +965,10 @@ namespace AlarmTrigger
             string stringAlarm = "人脸比对报警，抓拍设备：" + System.Text.Encoding.UTF8.GetString(struFaceMatchAlarm.struSnapInfo.struDevInfo.struDevIP.sIpV4).TrimEnd('\0') + "，抓拍时间："
                 + strTime + "，相似度：" + struFaceMatchAlarm.fSimilarity;
 
-            
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
 
         private static void ProcessCommAlarm_FaceDetect(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
@@ -1000,8 +992,8 @@ namespace AlarmTrigger
             string stringAlarm = "人脸抓拍结果结果，前端设备：" + System.Text.Encoding.UTF8.GetString(struFaceDetectInfo.struDevInfo.struDevIP.sIpV4) + "，报警时间：" + strTime;
 
             //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
 
         private static void ProcessCommAlarm_CIDAlarm(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
@@ -1026,10 +1018,10 @@ namespace AlarmTrigger
                 + "，sCIDDescribe：" + System.Text.Encoding.UTF8.GetString(struCIDAlarm.sCIDDescribe).TrimEnd('\0')
                 + "，报告类型：" + struCIDAlarm.byReportType + "，防区号：" + struCIDAlarm.wDefenceNo + "，报警触发时间：" + strTime;
 
-            
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
 
         private static void ProcessCommAlarm_InterComEvent(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
@@ -1075,9 +1067,9 @@ namespace AlarmTrigger
 
             string stringAlarm = "可视对讲事件，byEventType：" + struInterComEvent.byEventType + "，设备编号："
                 + System.Text.Encoding.UTF8.GetString(struInterComEvent.byDevNumber).TrimEnd('\0') + "，报警触发时间：" + strTime;
-            
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
 
         }
 
@@ -1116,8 +1108,8 @@ namespace AlarmTrigger
                 + System.Text.Encoding.UTF8.GetString(struAcsAlarm.struAcsEventInfo.byCardNo).TrimEnd('\0') + "，读卡器编号：" +
                 struAcsAlarm.struAcsEventInfo.dwCardReaderNo + "，报警触发时间：" + strTime;
 
-             //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
 
         }
 
@@ -1235,9 +1227,9 @@ namespace AlarmTrigger
                 fsPic.Close();
                 iFileNumber++;
             }
-            
-                //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
+            //创建该控件的主线程直接更新信息列表 
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
         }
         private static void ProcessCommAlarm_AIOPPicture(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
         {
@@ -1274,8 +1266,8 @@ namespace AlarmTrigger
                 iFileNumber++;
             }
             //创建该控件的主线程直接更新信息列表 
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
         private static void ProcessCommAlarm_ISAPIAlarm(ref CHCNetSDK.NET_DVR_ALARMER pAlarmer, IntPtr pAlarmInfo, uint dwBufLen, IntPtr pUser)
         {
@@ -1331,24 +1323,26 @@ namespace AlarmTrigger
             }
 
             string stringAlarm = "ISAPI报警信息，byDataType：" + struISAPIAlarm.byDataType + "，图片张数：" + struISAPIAlarm.byPicturesNumber;
-            
-                UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
-            
+
+            UpdateClientList(DateTime.Now.ToString(), strIP, stringAlarm);
+
         }
         public static void UpdateClientList(string strAlarmTime, string strDevIP, string strAlarmMsg)
         {
             //列表新增报警信息
             //列表新增报警信息
-            var alarmInfoObj = new AlarmInfo() {
-                AlarmTime=strAlarmTime, DeviceIp=strDevIP, AlarmMsg=strAlarmMsg 
+            var alarmInfoObj = new AlarmInfo()
+            {
+                AlarmTime = strAlarmTime,
+                DeviceIp = strDevIP,
+                AlarmMsg = strAlarmMsg
             };
             //listAlarmInfo.Add(alarmInfoObj);
             GetDeviceDetails gt = new GetDeviceDetails();
-           gt.SaveMonitoringDetails(strDevIP, strAlarmMsg, strAlarmTime);
+            gt.SaveMonitoringDetails(strDevIP, strAlarmMsg, strAlarmTime);
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(alarmInfoObj));
             SendMessageToWeb(alarmInfoObj);
-           // proxy.Invoke("AlarmMessage", JsonSerializer.Serialize(alarmInfoObj));
-            //listViewAlarmInfo.Items.Add(new ListViewItem(new string[] { strAlarmTime, strDevIP, strAlarmMsg }));
+
         }
 
         #region Get Devices and Login
@@ -1375,7 +1369,7 @@ namespace AlarmTrigger
             }
             //创建该控件的主线程直接更新信息列表 
             UpdateClientList(strLoginCallBack, lpDeviceInfo);
-            
+
         }
         public static void UpdateClientList(string strLogStatus, IntPtr lpDeviceInfo)
         {
@@ -1387,7 +1381,7 @@ namespace AlarmTrigger
         {
             Console.WriteLine(ip);
             CHCNetSDK.NET_DVR_USER_LOGIN_INFO struLogInfo = new CHCNetSDK.NET_DVR_USER_LOGIN_INFO();
-            
+
             //设备IP地址或者域名
             byte[] byIP = System.Text.Encoding.Default.GetBytes(ip);
             struLogInfo.sDeviceAddress = new byte[129];
@@ -1395,9 +1389,9 @@ namespace AlarmTrigger
 
             //设备用户名
             byte[] byUserName = System.Text.Encoding.Default.GetBytes(userid);
-            struLogInfo.sUserName = new byte[64];            
+            struLogInfo.sUserName = new byte[64];
             byUserName.CopyTo(struLogInfo.sUserName, 0);
-            
+
             //设备密码
             byte[] byPassword = System.Text.Encoding.Default.GetBytes(password);
             struLogInfo.sPassword = new byte[64];
@@ -1420,34 +1414,40 @@ namespace AlarmTrigger
                 if (m_lUserID < 0)
                 {
                     iLastErr = CHCNetSDK.NET_DVR_GetLastError();
-                    
+
                     strErr = "NET_DVR_Login_V30 failed, error code= " + iLastErr; //登录失败，输出错误号 Failed to login and output the error code
-                   
+
                     Console.WriteLine(strErr);
                 }
                 else
                 {
                     //登录成功
                     iDeviceNumber++;
-                   // string str1 = "" + m_lUserID;
-                    var x = new DeviceInfo() { MuserId = m_lUserID, DeviceIp = ip,
-                        Message = "未布防", ClassId=classid,Ccmac=ccmac.ToUpper() };
+                    // string str1 = "" + m_lUserID;
+                    var x = new DeviceInfo()
+                    {
+                        MuserId = m_lUserID,
+                        DeviceIp = ip,
+                        Message = "未布防",
+                        ClassId = classid,
+                        Ccmac = ccmac.ToUpper()
+                    };
                     deviceInfos.Add(x);//将已注册设备添加进列表
                     GetDeviceDetails gt = new GetDeviceDetails();
                     //gt.SaveCamLoginInfo(ip, classid);
                     SetAlarm(x);
-                    Console.WriteLine("Successful login : "+JsonSerializer.Serialize(x));
+                    Console.WriteLine("Successful login : " + JsonSerializer.Serialize(x));
                 }
             }
             //登录设备 Login the device
-           catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine("error " + ex.StackTrace + " message " + ex.InnerException+
-                    " message "+ ex.Message);
+                Console.WriteLine("error " + ex.StackTrace + " message " + ex.InnerException +
+                    " message " + ex.Message);
                 Console.Read();
             }
         }
-        private static  void SetAlarm(DeviceInfo device)
+        private static void SetAlarm(DeviceInfo device)
         {
             CHCNetSDK.NET_DVR_SETUPALARM_PARAM struAlarmParam = new CHCNetSDK.NET_DVR_SETUPALARM_PARAM();
             struAlarmParam.dwSize = (uint)Marshal.SizeOf(struAlarmParam);
@@ -1464,7 +1464,7 @@ namespace AlarmTrigger
             }
             else
             {
-               device.Message = "布防成功";
+                device.Message = "布防成功";
             }
             deviceInfos.ForEach(x => Console.WriteLine(JsonSerializer.Serialize(x)));
         }
@@ -1510,9 +1510,12 @@ namespace AlarmTrigger
             }
             else
             {
-                Console.WriteLine("成功启动监听！");                
+                Console.WriteLine("成功启动监听！");
             }
         }
+        /// <summary>
+        /// logout the camera and stop listening to the movement
+        /// </summary>
         private static void StopListenTcp()
         {
             if (!CHCNetSDK.NET_DVR_StopListen_V30(iListenHandle))
@@ -1524,7 +1527,7 @@ namespace AlarmTrigger
             else
             {
                 Console.WriteLine("停止监听！");
-                
+
             }
         }
         #endregion
@@ -1534,38 +1537,39 @@ namespace AlarmTrigger
         {
             try
             {
-                con = new HubConnection("http://localhost:8080/");
+                var proxyUrl = ConfigurationManager.AppSettings.Get("proxyUrl").ToString();
+                con = new HubConnection(proxyUrl);
                 // con.TraceLevel = TraceLevels.All;
                 // con.TraceWriter = Console.Out;
                 proxy = con.CreateHubProxy("myHub");
                 // MessageBox.Show("create proxy hub called");
-                proxy.On<string,string>("AlarmEvent", (mac,data) =>
-                {
-                    try
-                    {
-                        GetDeviceDetails gt = new GetDeviceDetails();
-                        var s =gt.GetDeviceDetailByMachine(mac);
-                        if (data == "TriggerOn")
-                        {
-                            LoginDevices(s.DeviceIpT, s.Password, s.UserId, s.Port, s.ClassId,s.Ccmac);
+                proxy.On<string, string>("AlarmEvent", (mac, data) =>
+                 {
+                     try
+                     {
+                         GetDeviceDetails gt = new GetDeviceDetails();
+                         var s = gt.GetDeviceDetailByMachine(mac);
+                         if (data == "TriggerOn")
+                         {
+                             LoginDevices(s.DeviceIpT, s.Password, s.UserId, s.Port, s.ClassId, s.Ccmac);
                             //LoginDevices(s.DeviceIpSt, s.Password, s.UserId, s.Port, s.ClassId,s.Ccmac);
                         }
-                        else if (data == "TriggerOff")
-                        {
-                            var d = deviceInfos.Where(x => x.Ccmac == mac.ToUpper()).Select(x => x).FirstOrDefault();
-                            if (d != null)
-                            {
-                                CloseAlarm(d);
-                            }
-                        }
-                    }
+                         else if (data == "TriggerOff")
+                         {
+                             var d = deviceInfos.Where(x => x.Ccmac == mac.ToUpper()).Select(x => x).FirstOrDefault();
+                             if (d != null)
+                             {
+                                 CloseAlarm(d);
+                             }
+                         }
+                     }
 #pragma warning disable CS0168 // The variable 'ex' is declared but never used
                     catch (Exception ex)
 #pragma warning restore CS0168 // The variable 'ex' is declared but never used
                     {
                         // Console.WriteLine(ex.Message);
                     }
-                });
+                 });
                 con.Start().ContinueWith(task =>
                 {
                     if (task.IsFaulted)
@@ -1583,9 +1587,6 @@ namespace AlarmTrigger
         }
         public static void SendMessageToWeb(AlarmInfo alm)
         {
-            Dictionary<string, object> message1 = new Dictionary<string, object>();
-
-            //message1.Add("test", "success");
             try
             {
                 if (con.State != ConnectionState.Connected)
@@ -1594,7 +1595,7 @@ namespace AlarmTrigger
                     con.Start().Wait();
                     // Console.WriteLine("connected");
                 }
-                proxy.Invoke("AlarmMessage",Newtonsoft.Json.JsonConvert.SerializeObject(alm) );
+                proxy.Invoke("AlarmMessage", Newtonsoft.Json.JsonConvert.SerializeObject(alm));
                 //Console.WriteLine("Sent to signalR server by" + sender);
 
             }
@@ -1623,7 +1624,9 @@ namespace AlarmTrigger
             {
                 // Console.WriteLine("State changed else inside");
                 if (_timer != null)
+                {
                     _timer.Dispose();
+                }
             }
         }
 
@@ -1651,9 +1654,9 @@ namespace AlarmTrigger
 
     class AlarmInfo
     {
-       public string AlarmTime { get; set; }
-       public string DeviceIp { get; set; }
-       public string AlarmMsg { get; set; }
+        public string AlarmTime { get; set; }
+        public string DeviceIp { get; set; }
+        public string AlarmMsg { get; set; }
     }
     class DeviceInfo
     {
